@@ -16,6 +16,11 @@ import lombok.*;
 
 @Entity
 @Getter @Setter
+@View(members=
+"anyo,numero,fecha;"+
+"cliente;"+
+"detalles;"+
+"observaciones;")
 public class Factura {
 
 	
@@ -40,6 +45,7 @@ public class Factura {
 	
 	
 	@ManyToOne(fetch=FetchType.LAZY,optional=false)
+	@ReferenceView("Simple")
 	Cliente cliente;
 	
 	@ElementCollection
