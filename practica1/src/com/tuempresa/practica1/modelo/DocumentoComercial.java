@@ -9,6 +9,7 @@ import javax.validation.constraints.*;
 
 import org.openxava.annotations.*;
 import org.openxava.calculators.*;
+import org.openxava.jpa.*;
 
 import com.tuempresa.practica1.calculadores.*;
 
@@ -17,7 +18,7 @@ import lombok.*;
 @Entity
 @Getter @Setter
 @View(members=
-"anyo,numero,fecha;"+
+"anyo,numero,fecha,"+
 "datos{"+
 "cliente;"+
 "detalles;"+
@@ -30,8 +31,8 @@ abstract public class DocumentoComercial extends Identificable{
 	int anyo;
 	
 	@Column(length=6)
-	@DefaultValueCalculator(value = CalculadorSiguienteNumeroParaAnyo.class,
-	properties = @PropertyValue(name="anyo"))
+	//@DefaultValueCalculator(value = CalculadorSiguienteNumeroParaAnyo.class,properties = @PropertyValue(name="anyo"))
+	@ReadOnly
 	int numero;
 	
 	@DefaultValueCalculator(CurrentLocalDateCalculator.class)
@@ -67,4 +68,20 @@ abstract public class DocumentoComercial extends Identificable{
 	@Stereotype("DINERO")
 	@Calculation("sum(detalles.importe)+iva")
 	BigDecimal importeTotal;
+	
+	@PrePersist
+	private void calcularNumero() {
+		Query query=XPersistence.getManager().createQuery(
+	                "select max(f.numero) from "+
+	              	getClass().getSimpleName()+
+	            	" f where f.anyo = :anyo");
+		
+		query.setParameter("anyo", anyo);
+		Integer ultimoNumero=(Integer) query.getSingleResult();
+		this.numero= ultimoNumero ==null ?1: ultimoNumero+1;
+	}
+	@org.hibernate.annotations.Formula("IMPORTETOTAL *0.10")
+	@Setter(AccessLevel.NONE)
+	@Stereotype("DINERO")
+	BigDecimal beneficioEstimado;
 }
