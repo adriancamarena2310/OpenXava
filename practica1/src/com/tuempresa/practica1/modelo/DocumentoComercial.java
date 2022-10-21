@@ -50,7 +50,7 @@ abstract public class DocumentoComercial extends Identificable{
 			+ "documentoComercial.iva,"
 			+ "documentoComercial.importeTotal"
 			+ "]")
-	Collection <Detalle> detalles;
+	Collection <Detalle> detalles;                                                
 	
 	@Stereotype("MEMO")
 	String observaciones;

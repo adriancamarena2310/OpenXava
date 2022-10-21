@@ -3,6 +3,7 @@ package com.tuempresa.practica1.modelo;
 import java.time.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import org.openxava.annotations.*;
 
@@ -11,13 +12,15 @@ import lombok.*;
 
 @Entity @Getter @Setter
 @View(extendsView="super.DEFAULT",
-members="diaEntregaEstimados,"+
+members="diaEntregaEstimados, entregado,"+
 "factura{factura}")
 
 @View(name="SinClienteNiFactura",
 members="anyo,numero,fecha;"
 		+ "detalles;"
 		+ "observaciones")
+
+
 
 public class Pedido extends DocumentoComercial{
 
@@ -48,6 +51,12 @@ public class Pedido extends DocumentoComercial{
 	private void recalcularDiaEntrega() {
 		setDiasEntrega(getDiaEntregaEstimados());
 	}
+	@Column(columnDefinition="BOOLEAN DEFAULT FALSE")
+	boolean entregado;
 	
-	
+	@AssertTrue(message = "pedido_debe_estar_entegado")
+	private boolean isEntregadoParaEstarEnFactura() {
+		return factura == null || isEntregado();
+	}
+
 }
