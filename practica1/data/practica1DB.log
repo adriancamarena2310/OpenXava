@@ -1,4 +1,0 @@
-/*C3*/SET SCHEMA PUBLIC
-DISCONNECT
-/*C4*/SET SCHEMA PUBLIC
-alter table PRACTICA1.PRODUCTO add column isbn varchar(13)
